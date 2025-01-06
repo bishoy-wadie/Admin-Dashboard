@@ -1,13 +1,36 @@
-<div class="sidebar w-64 bg-gray-800 text-white">
+<div class="sidebar">
+  <h2 class="text-lg">LOGO</h2>
   <ul>
-    <li class="p-2 hover:bg-gray-700">
-      <a routerLink="/dashboard">Dashboard</a>
+    <!-- Sidebar content here -->
+    <li class="p-2">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="bg-blue-500 text-white font-bold"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="material-icons-outlined"> dashboard </span>
+        Dashboard</a
+      >
     </li>
-    <li class="p-2 hover:bg-gray-700">
-      <a routerLink="/products">Products</a>
+    <li class="p-2">
+      <a
+        routerLink="/products"
+        routerLinkActive="bg-blue-500 text-white font-bold"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="material-icons-outlined"> vaccines </span>
+        Products</a
+      >
     </li>
-    <li class="p-2 hover:bg-gray-700">
-      <a routerLink="/categories">Categories</a>
+    <li class="p-2">
+      <a
+        routerLink="/categories"
+        routerLinkActive="bg-blue-500 text-white font-bold"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="material-icons-outlined"> category </span>
+        Categories</a
+      >
     </li>
   </ul>
 </div>
