@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
+import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,10 @@ const routes: Routes = [
     loadChildren: () =>
       import('./categories/categories.module').then((m) => m.CategoriesModule),
     canActivate: [authGuard],
+  },
+  {
+    path: '**',
+    component: NotFoundComponent,
   },
 ];
 

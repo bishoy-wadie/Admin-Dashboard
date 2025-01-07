@@ -49,9 +49,7 @@ export class AuthenticationComponent implements OnInit {
         (res) => {
           this.toastr.success('Login successful');
           localStorage.setItem('authToken', res.token);
-          const returnUrl =
-            this.route.snapshot.queryParamMap.get('returnUrl') || '/dashboard';
-          this.router.navigateByUrl(returnUrl);
+          this.router.navigate(['/dashboard']);
         },
         (err) => {
           this.errorMessage =
