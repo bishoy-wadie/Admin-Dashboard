@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +13,15 @@ export class AppComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.router.events.subscribe(() => {
-      this.showSidebarAndNavbar = !this.router.url.includes('/login');
-    });
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        const currentRoute = this.router.url;
+        //not best practice need to be handled as layout
+        this.showSidebarAndNavbar =
+          currentRoute.includes('/dashboard') ||
+          currentRoute.includes('/products') ||
+          currentRoute.includes('/categories');
+      });
   }
 }
