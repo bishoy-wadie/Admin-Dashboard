@@ -1,1 +1,46 @@
-<p>table works!</p>
+<div class="overflow-x-auto">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th
+          *ngFor="let disCol of tableColumns; let colIndex = index"
+          class="border border-gray-300 p-2 text-left"
+        >
+          {{ disCol.header }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let element of tableData" class="hover:bg-gray-100">
+        <td *ngFor="let col of tableColumns" class="border border-gray-300 p-2">
+          <!-- Render Images -->
+          <div class="avatar" *ngIf="col.type === 'image'; else nonImage">
+            <div class="mask mask-squircle h-12 w-12">
+              <img
+                [src]="col.cell(element)"
+                alt="{{ col.header }}"
+                class="h-12 w-12 object-cover rounded"
+              />
+            </div>
+          </div>
+
+          <!-- Render Text or Links -->
+          <ng-template #nonImage>
+            <span *ngIf="col.type !== 'link'; else link">
+              {{ col.cell(element) }}
+            </span>
+
+            <ng-template #link>
+              <a [routerLink]="[col.url]" class="text-blue-500 hover:underline">
+                {{ col.cell(element) }}
+              </a>
+            </ng-template>
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+    <!-- foot -->
+    <tfoot></tfoot>
+  </table>
+</div>
