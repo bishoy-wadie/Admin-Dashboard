@@ -1,1 +1,79 @@
-<p>authentication works!</p>
+<div class="hero bg-blue-200 min-h-screen">
+  <div class="hero-content flex-col lg:flex-row-reverse">
+    <div class="text-center lg:text-left">
+      <h1 class="text-5xl font-bold">Login now!</h1>
+      <p class="py-6">
+        To access the Admin Dashboard, please enter the username and password
+        provided in the README file in the repository.
+      </p>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <form class="card-body" [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Username</span>
+          </label>
+          <input
+            type="text"
+            placeholder="username"
+            formControlName="username"
+            class="input input-bordered"
+            required
+          />
+          <div class="text-red-500 text-sm mt-1">
+            <small
+              *ngIf="
+                loginForm.get('username')?.hasError('required') &&
+                loginForm.get('username')?.touched
+              "
+            >
+              Username is required.
+            </small>
+          </div>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Password</span>
+          </label>
+          <label class="input input-bordered flex items-center justify-between">
+            <input
+              [type]="passwordVisible ? 'text' : 'password'"
+              placeholder="password"
+              formControlName="password"
+              required
+            />
+            <a
+              class="cursor-pointer"
+              (click)="passwordVisible = !passwordVisible"
+            >
+              <ng-container *ngIf="passwordVisible; else hideIcon">
+                <span class="material-icons-outlined"> visibility </span>
+              </ng-container>
+              <ng-template #hideIcon>
+                <span class="material-icons-outlined"> visibility_off </span>
+              </ng-template>
+            </a>
+          </label>
+          <div class="text-red-500 text-sm mt-1">
+            <small
+              *ngIf="
+                loginForm.get('password')?.hasError('required') &&
+                loginForm.get('password')?.touched
+              "
+            >
+              Password is required.
+            </small>
+          </div>
+        </div>
+        <div class="form-control mt-6">
+          <button class="btn btn-primary" [disabled]="isLoading">
+            <ng-container *ngIf="isLoading; else loginText">
+              <span class="loading loading-dots loading-md text-primary"></span>
+            </ng-container>
+            <ng-template #loginText>Login</ng-template>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
