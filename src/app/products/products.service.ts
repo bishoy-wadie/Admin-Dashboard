@@ -65,4 +65,13 @@ export class ProductsService {
       })
     );
   }
+
+  getCategories(): Observable<any> {
+    return this.http.get<any>(`${this.url}/categories`).pipe(
+      catchError((error) => {
+        console.error('Getting categories failed:', error);
+        return throwError(error);
+      })
+    );
+  }
 }
