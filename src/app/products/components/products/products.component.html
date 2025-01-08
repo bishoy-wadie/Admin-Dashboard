@@ -1,27 +1,27 @@
 <div class="p-3 flex flex-col gap-3">
   <h1 class="text-3xl font-semibold">Products</h1>
+  <div class="flex justify-between p-3 bg-blue-100 rounded">
+    <app-search (searchQuery)="onSearch($event)"></app-search>
+    <button
+      onclick="addEditModal.showModal()"
+      class="btn btn-outline hover:btn btn-primary"
+    >
+      <span class="material-icons-outlined"> add </span>
+      Add Product
+    </button>
+  </div>
   <div
-    *ngIf="tableData.length === 0 && !isLoading"
+    *ngIf="filteredTableData.length === 0 && !isLoading"
     class="hero bg-blue-100 min-h-screen rounded"
   >
     <h2 class="text-2xl font-semibold hero-content text-center">
       No data available.
     </h2>
   </div>
-  <div
-    *ngIf="tableData.length !== 0"
-    class="flex justify-between p-3 bg-blue-100 rounded"
-  >
-    <app-search (searchQuery)="onSearch($event)"></app-search>
-    <button class="btn btn-outline hover:btn btn-primary">
-      <span class="material-icons-outlined"> add </span>
-      Add Product
-    </button>
-  </div>
   <div *ngIf="isLoading">
     <app-table-skeleton></app-table-skeleton>
   </div>
-  <div *ngIf="tableData.length !== 0">
+  <div *ngIf="filteredTableData.length !== 0">
     <app-table
       [tableColumns]="tableColumns"
       [tableData]="filteredTableData"
@@ -30,9 +30,7 @@
   </div>
 </div>
 
-<!-- Open the modal using ID.showModal() method -->
-<!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
-<dialog #myModal id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+<dialog #deleteModal id="my_modal_5" class="modal modal-bottom sm:modal-middle">
   <div class="modal-box">
     <h3 class="text-lg font-bold">Are you sure?</h3>
     <p class="py-4">Do you really want to delete this product?</p>
@@ -59,5 +57,11 @@
         </button>
       </div>
     </div>
+  </div>
+</dialog>
+
+<dialog #addEditModal id="addEditModal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl">
+    <app-add-edit-product [modal]="addEditModal"></app-add-edit-product>
   </div>
 </dialog>

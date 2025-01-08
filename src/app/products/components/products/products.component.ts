@@ -60,7 +60,8 @@ export class ProductsComponent implements OnInit {
   tableData: Array<any> = [];
   filteredTableData: Array<any> = [];
 
-  @ViewChild('myModal') modal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('deleteModal') deleteModal!: ElementRef<HTMLDialogElement>;
+  @ViewChild('addEditModal') addEditModal!: ElementRef<HTMLDialogElement>;
   productIdToDelete!: number;
 
   isLoading: boolean = false;
@@ -73,6 +74,9 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllProducts();
+    this.productsService.productsSubject.subscribe((products) => {
+      this.filteredTableData = products;
+    });
   }
 
   getAllProducts() {
@@ -87,7 +91,7 @@ export class ProductsComponent implements OnInit {
       .subscribe(
         (res) => {
           this.tableData = res;
-          this.filteredTableData = this.tableData;
+          this.productsService.productsSubject.next(this.tableData);
         },
         (err) => {
           this.toastr.error(err?.message);
@@ -97,33 +101,38 @@ export class ProductsComponent implements OnInit {
 
   onSearch(query: string) {
     if (!query) {
-      this.filteredTableData = this.tableData;
+      this.filteredTableData = this.productsService.productsSubject.value;
     } else {
-      this.filteredTableData = this.tableData.filter((item) => {
-        return (
-          item.title.toLowerCase().includes(query) ||
-          item.category.toLowerCase().includes(query)
-        );
-      });
+      this.filteredTableData =
+        this.productsService.productsSubject?.value?.filter((item) => {
+          return (
+            item.title.toLowerCase().includes(query) ||
+            item.category.toLowerCase().includes(query)
+          );
+        });
     }
   }
 
   handleIconClick(event: { action: string; data: any }) {
     const { action, data } = event;
     if (action === 'edit') {
-      // this.editProduct(data);
+      this.openEditProductModal(data?.id);
     } else if (action === 'delete') {
       this.openDeleteProductModal(data?.id);
     }
   }
 
+  openEditProductModal(id: number) {
+    this.addEditModal.nativeElement.showModal();
+  }
+
   openDeleteProductModal(id: number) {
     this.productIdToDelete = id;
-    this.modal.nativeElement.showModal();
+    this.deleteModal.nativeElement.showModal();
   }
 
   closeDeleteProductModal() {
-    this.modal.nativeElement.close();
+    this.deleteModal.nativeElement.close();
   }
 
   confirmDelete() {
@@ -138,10 +147,6 @@ export class ProductsComponent implements OnInit {
       .subscribe(
         (res) => {
           this.toastr.success('Product deleted successfully!');
-          this.tableData = this.tableData.filter(
-            (product) => product.id !== this.productIdToDelete
-          );
-          this.filteredTableData = this.tableData;
           this.closeDeleteProductModal();
         },
         (error) => {
