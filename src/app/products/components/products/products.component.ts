@@ -66,6 +66,8 @@ export class ProductsComponent implements OnInit {
 
   isLoading: boolean = false;
   isUpdating: boolean = false;
+  isEditMode = false;
+  productToEdit: any;
 
   constructor(
     private productsService: ProductsService,
@@ -116,19 +118,28 @@ export class ProductsComponent implements OnInit {
   handleIconClick(event: { action: string; data: any }) {
     const { action, data } = event;
     if (action === 'edit') {
-      this.openEditProductModal(data?.id);
+      this.openEditProductModal(data);
     } else if (action === 'delete') {
       this.openDeleteProductModal(data?.id);
     }
   }
 
-  openEditProductModal(id: number) {
+  openEditProductModal(product: any) {
+    this.isEditMode = true;
+    this.productToEdit = product;
+
     this.addEditModal.nativeElement.showModal();
   }
 
   openDeleteProductModal(id: number) {
     this.productIdToDelete = id;
     this.deleteModal.nativeElement.showModal();
+  }
+
+  openAddProductModal() {
+    this.isEditMode = false;
+    this.productToEdit = null;
+    this.addEditModal.nativeElement.showModal();
   }
 
   closeDeleteProductModal() {

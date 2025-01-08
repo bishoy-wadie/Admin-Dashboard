@@ -5,8 +5,8 @@
   >
     <app-search (searchQuery)="onSearch($event)"></app-search>
     <button
-      onclick="addEditModal.showModal()"
       class="btn btn-outline hover:btn btn-primary"
+      (click)="openAddProductModal()"
     >
       <span class="material-icons-outlined"> add </span>
       Add Product
@@ -64,6 +64,10 @@
 
 <dialog #addEditModal id="addEditModal" class="modal">
   <div class="modal-box w-11/12 max-w-5xl">
-    <app-add-edit-product [modal]="addEditModal"></app-add-edit-product>
+    <app-add-edit-product
+      [isEditMode]="isEditMode"
+      [product]="productToEdit"
+      [modal]="addEditModal"
+    ></app-add-edit-product>
   </div>
 </dialog>

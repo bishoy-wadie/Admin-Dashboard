@@ -1,4 +1,7 @@
-<h1 class="text-3xl">New product</h1>
+<h1 class="text-3xl">
+  <span *ngIf="!isEditMode">New Product</span>
+  <span *ngIf="isEditMode">Edit Product</span>
+</h1>
 <form class="card-body" [formGroup]="productForm">
   <div class="form-control">
     <label class="label">
@@ -62,7 +65,7 @@
         productForm.controls['title'].hasError('maxlength')
       "
     >
-      Title must not exceeds 30 characters long.
+      Title must not exceeds 100 characters long.
     </small>
   </div>
   <div class="form-control">
@@ -91,7 +94,7 @@
         productForm.controls['description'].hasError('minlength')
       "
     >
-      Description must be at least 50 characters long.
+      Description must be at least 30 characters long.
     </small>
     <small
       class="text-red-500"
@@ -100,7 +103,7 @@
         productForm.controls['description'].hasError('maxlength')
       "
     >
-      Description must not exceeds 100 characters long.
+      Description must not exceeds 700 characters long.
     </small>
   </div>
   <div class="form-control">
@@ -160,9 +163,16 @@
       (click)="addEditProduct()"
       [disabled]="isLoading"
     >
-      <span *ngIf="!isLoading">Add</span>
-      <span *ngIf="isLoading">Adding</span>
-      <span *ngIf="isLoading" class="loading loading-dots loading-xs"></span>
+      <span *ngIf="!isEditMode">
+        <span *ngIf="!isLoading">Add</span>
+        <span *ngIf="isLoading">Adding</span>
+        <span *ngIf="isLoading" class="loading loading-dots loading-xs"></span>
+      </span>
+      <span *ngIf="isEditMode">
+        <span *ngIf="!isLoading">Update</span>
+        <span *ngIf="isLoading">Updating</span>
+        <span *ngIf="isLoading" class="loading loading-dots loading-xs"></span>
+      </span>
     </button>
     <button
       class="btn btn-primary"

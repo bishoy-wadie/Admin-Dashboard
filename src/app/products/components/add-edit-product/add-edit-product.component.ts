@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductsService } from '../../products.service';
 import { ToastrService } from 'ngx-toastr';
@@ -9,11 +15,13 @@ import { finalize } from 'rxjs';
   templateUrl: './add-edit-product.component.html',
   styleUrl: './add-edit-product.component.css',
 })
-export class AddEditProductComponent implements OnInit {
+export class AddEditProductComponent implements OnInit, OnChanges {
   productForm!: FormGroup;
-  imagePreview: string = 'assets/thumbnail.svg';
+  imagePreview!: string;
   isLoading: boolean = false;
   @Input() modal!: HTMLDialogElement;
+  @Input() isEditMode: boolean = false;
+  @Input() product: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -21,11 +29,16 @@ export class AddEditProductComponent implements OnInit {
     private toastr: ToastrService
   ) {}
 
-  ngOnInit() {
-    this.initializeForm();
+  ngOnInit() {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.isEditMode) {
+      this.initializeFormForEdit();
+    } else {
+      this.initializeFormForNew();
+    }
   }
 
-  initializeForm() {
+  initializeFormForNew() {
     this.productForm = this.fb.group({
       image: [null, Validators.required],
       title: [
@@ -33,20 +46,46 @@ export class AddEditProductComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(10),
-          Validators.maxLength(30),
+          Validators.maxLength(100),
         ],
       ],
       description: [
         '',
         [
           Validators.required,
-          Validators.minLength(50),
-          Validators.maxLength(100),
+          Validators.minLength(30),
+          Validators.maxLength(700),
         ],
       ],
       category: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0.1)]],
     });
+    this.imagePreview = 'assets/thumbnail.svg';
+  }
+
+  initializeFormForEdit() {
+    this.productForm = this.fb.group({
+      image: [this.product?.image, Validators.required],
+      title: [
+        this.product?.title,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(100),
+        ],
+      ],
+      description: [
+        this.product?.description,
+        [
+          Validators.required,
+          Validators.minLength(30),
+          Validators.maxLength(700),
+        ],
+      ],
+      category: [this.product?.category, Validators.required],
+      price: [this.product?.price, [Validators.required, Validators.min(0.1)]],
+    });
+    this.imagePreview = this.product?.image;
   }
 
   onImageSelected(event: Event) {
@@ -69,23 +108,43 @@ export class AddEditProductComponent implements OnInit {
     }
 
     this.isLoading = true;
+
     const formData = this.productForm.value;
-    this.productsService
-      .addProduct(formData)
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-          this.closeModal();
-        })
-      )
-      .subscribe(
-        (res) => {
-          this.toastr.success('Product created successfully');
-        },
-        (err) => {
-          this.toastr.error(err?.message);
-        }
-      );
+    if (this.isEditMode) {
+      this.productsService
+        .editProduct(this.product?.id, formData)
+        .pipe(
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe(
+          (res) => {
+            this.toastr.success('Product updated successfully');
+            this.closeModal();
+          },
+          (err) => {
+            this.toastr.error(err?.message);
+          }
+        );
+    } else {
+      this.productsService
+        .addProduct(formData)
+        .pipe(
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe(
+          (res) => {
+            this.toastr.success('Product created successfully');
+            this.closeModal();
+          },
+          (err) => {
+            this.toastr.error(err?.message);
+          }
+        );
+    }
   }
 
   closeModal() {
