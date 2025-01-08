@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Column } from '../../../shared/components/table/column';
 import { ProductsService } from '../../products.service';
 import { ToastrService } from 'ngx-toastr';
@@ -60,7 +60,11 @@ export class ProductsComponent implements OnInit {
   tableData: Array<any> = [];
   filteredTableData: Array<any> = [];
 
+  @ViewChild('myModal') modal!: ElementRef<HTMLDialogElement>;
+  productIdToDelete!: number;
+
   isLoading: boolean = false;
+  isUpdating: boolean = false;
 
   constructor(
     private productsService: ProductsService,
@@ -109,9 +113,40 @@ export class ProductsComponent implements OnInit {
     if (action === 'edit') {
       // this.editProduct(data);
     } else if (action === 'delete') {
-      this.deleteProduct(data);
+      this.openDeleteProductModal(data?.id);
     }
   }
 
-  deleteProduct(data: any) {}
+  openDeleteProductModal(id: number) {
+    this.productIdToDelete = id;
+    this.modal.nativeElement.showModal();
+  }
+
+  closeDeleteProductModal() {
+    this.modal.nativeElement.close();
+  }
+
+  confirmDelete() {
+    this.isUpdating = true;
+    this.productsService
+      .deleteProduct(this.productIdToDelete)
+      .pipe(
+        finalize(() => {
+          this.isUpdating = false;
+        })
+      )
+      .subscribe(
+        (res) => {
+          this.toastr.success('Product deleted successfully!');
+          this.tableData = this.tableData.filter(
+            (product) => product.id !== this.productIdToDelete
+          );
+          this.filteredTableData = this.tableData;
+          this.closeDeleteProductModal();
+        },
+        (error) => {
+          this.toastr.error('Error deleting product:', error);
+        }
+      );
+  }
 }

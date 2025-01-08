@@ -18,4 +18,13 @@ export class ProductsService {
       })
     );
   }
+
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.url}/${id}`).pipe(
+      catchError((error) => {
+        console.error('Deleting product failed:', error);
+        return throwError(error);
+      })
+    );
+  }
 }

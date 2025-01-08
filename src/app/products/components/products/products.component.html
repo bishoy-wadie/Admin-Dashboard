@@ -29,3 +29,35 @@
     ></app-table>
   </div>
 </div>
+
+<!-- Open the modal using ID.showModal() method -->
+<!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
+<dialog #myModal id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Are you sure?</h3>
+    <p class="py-4">Do you really want to delete this product?</p>
+    <div class="modal-action">
+      <div class="flex gap-3">
+        <button
+          class="btn btn-error"
+          [disabled]="isUpdating"
+          (click)="confirmDelete()"
+        >
+          <span *ngIf="!isUpdating"> Yes, Delete </span>
+          <span *ngIf="isUpdating">Deleting</span>
+          <span
+            *ngIf="isUpdating"
+            class="loading loading-dots loading-xs"
+          ></span>
+        </button>
+        <button
+          class="btn btn-primary"
+          [disabled]="isUpdating"
+          (click)="closeDeleteProductModal()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</dialog>
