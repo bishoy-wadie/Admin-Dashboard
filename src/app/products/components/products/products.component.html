@@ -1,0 +1,73 @@
+<div class="p-3 flex flex-col gap-3">
+  <h1 class="text-3xl font-semibold">Products</h1>
+  <div
+    class="flex flex-col gap-2 sm:flex-row sm:justify-between p-3 bg-blue-100 rounded"
+  >
+    <app-search (searchQuery)="onSearch($event)"></app-search>
+    <button
+      class="btn btn-outline hover:btn btn-primary"
+      (click)="openAddProductModal()"
+    >
+      <span class="material-icons-outlined"> add </span>
+      Add Product
+    </button>
+  </div>
+  <div
+    *ngIf="filteredTableData.length === 0 && !isLoading"
+    class="hero bg-blue-100 min-h-screen rounded"
+  >
+    <h2 class="text-2xl font-semibold hero-content text-center">
+      No data available.
+    </h2>
+  </div>
+  <div *ngIf="isLoading">
+    <app-table-skeleton></app-table-skeleton>
+  </div>
+  <div *ngIf="filteredTableData.length !== 0">
+    <app-table
+      [tableColumns]="tableColumns"
+      [tableData]="filteredTableData"
+      (iconClick)="handleIconClick($event)"
+    ></app-table>
+  </div>
+</div>
+
+<dialog #deleteModal id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Are you sure?</h3>
+    <p class="py-4">Do you really want to delete this product?</p>
+    <div class="modal-action">
+      <div class="flex gap-3">
+        <button
+          class="btn btn-error"
+          [disabled]="isUpdating"
+          (click)="confirmDelete()"
+        >
+          <span *ngIf="!isUpdating"> Yes, Delete </span>
+          <span *ngIf="isUpdating">Deleting</span>
+          <span
+            *ngIf="isUpdating"
+            class="loading loading-dots loading-xs"
+          ></span>
+        </button>
+        <button
+          class="btn btn-primary"
+          [disabled]="isUpdating"
+          (click)="closeDeleteProductModal()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog #addEditModal id="addEditModal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl">
+    <app-add-edit-product
+      [isEditMode]="isEditMode"
+      [product]="productToEdit"
+      [modal]="addEditModal"
+    ></app-add-edit-product>
+  </div>
+</dialog>
