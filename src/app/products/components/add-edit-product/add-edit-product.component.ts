@@ -19,6 +19,7 @@ export class AddEditProductComponent implements OnInit, OnChanges {
   productForm!: FormGroup;
   imagePreview!: string;
   isLoading: boolean = false;
+  categories: Array<any> = [];
   @Input() modal!: HTMLDialogElement;
   @Input() isEditMode: boolean = false;
   @Input() product: any = null;
@@ -29,7 +30,9 @@ export class AddEditProductComponent implements OnInit, OnChanges {
     private toastr: ToastrService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getAllCategories();
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.isEditMode) {
       this.initializeFormForEdit();
@@ -145,6 +148,25 @@ export class AddEditProductComponent implements OnInit, OnChanges {
           }
         );
     }
+  }
+
+  getAllCategories() {
+    this.isLoading = true;
+    this.productsService
+      .getCategories()
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe(
+        (res) => {
+          this.categories = res;
+        },
+        (err) => {
+          this.toastr.error(err?.message);
+        }
+      );
   }
 
   closeModal() {
